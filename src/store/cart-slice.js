@@ -6,9 +6,17 @@ export const cartSlice = createSlice({
     totalAmount: 0,
     items: [],
     showCart: false,
+    changed: false,
   },
   reducers: {
+    replaceData(state, action) {
+      state.totalAmount = action.payload.totalAmount;
+
+      console.log(action.payload);
+      state.items = action.payload.items;
+    },
     addItemToCart: (state, action) => {
+      state.changed = true;
       const newItem = action.payload;
       const existingItem = state.items.find((item) => item.id === newItem.id);
 
@@ -27,6 +35,7 @@ export const cartSlice = createSlice({
       }
     },
     removeItemFromCart: (state, action) => {
+      state.changed = true;
       const id = action.payload;
 
       const existingItem = state.items.find((item) => item.id === id);
@@ -45,6 +54,6 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { addItemToCart, removeItemFromCart, showCart } =
+export const { addItemToCart, removeItemFromCart, showCart, replaceData } =
   cartSlice.actions;
 export default cartSlice.reducer;

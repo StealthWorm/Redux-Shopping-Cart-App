@@ -4,7 +4,7 @@ import Auth from './components/Auth';
 import Layout from './components/Layout';
 import { useDispatch, useSelector } from 'react-redux';
 import Notification from './components/Notification';
-import { showNotification } from './store/ui-slice';
+import { fetchData, sendCartData } from './store/cart-actions';
 
 let isFirstRender = true;
 
@@ -16,39 +16,18 @@ function App() {
   const notification = useSelector((state) => state.ui.notification);
 
   useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isFirstRender) {
       isFirstRender = false;
       return;
     }
-    const sendRequest = async () => {
-      const res = await fetch(
-        'https://react-redux-db-ac6cc-default-rtdb.firebaseio.com/cartItems.json',
-        {
-          method: 'PUT',
-          body: JSON.stringify(cart),
-        }
-      );
 
-      const data = await res.json();
-
-      dispatch(
-        showNotification({
-          open: true,
-          message: 'Request Sent Successfully!',
-          type: 'success',
-        })
-      );
-    };
-
-    sendRequest().catch((err) => {
-      dispatch(
-        showNotification({
-          open: true,
-          message: 'Sending cart data failed!',
-          type: 'error',
-        })
-      );
-    });
+    if (cart.changed) {
+      dispatch(sendCartData(cart));
+    }
   }, [cart, dispatch]);
 
   return (
